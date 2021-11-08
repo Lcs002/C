@@ -61,7 +61,7 @@ void main()
     } while(getch() == 's');
 
     system("cls");               // Limpiar pantalla
-    print_lst_fecha(&lst_fecha); // Muestra la lista
+    print_lst_fecha(lst_fecha); // Muestra la lista
 
     // ESCRIBIR ABAJO OTRAS FUNCIONES ...
 
@@ -86,7 +86,7 @@ void scan_fecha(FECHA * fecha)
 
 void print_fecha(FECHA fecha)
 {
-    printf("\n %d / %d / %d ", fecha.dia, fecha.mes, fecha.anio);
+    printf("%d / %d / %d ", fecha.dia, fecha.mes, fecha.anio);
 }
 
 
@@ -216,9 +216,11 @@ FECHA * get_lst_fecha(unsigned index, LST_FECHA * lst_fecha)
 
 void print_lst_fecha(LST_FECHA lst_fecha)
 {
+    unsigned i = 0;
     NODO_FECHA * curr_nodo = lst_fecha.head; // curr para current
     while (curr_nodo != NULL)
     {
+        printf("\n%3u: ", i++);
         print_fecha(curr_nodo->fecha);
         curr_nodo = curr_nodo->nxt;
     }
