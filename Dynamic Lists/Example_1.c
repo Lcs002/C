@@ -1,7 +1,10 @@
 // ===============================================  LISTAS DINAMICAS CON NODOS
 
+// =========== INCLUDES
+
 #include <stdio.h>
 #include <stdlib.h>
+
 
 // =========== STRUCTS
 
@@ -12,7 +15,7 @@ typedef struct Tfecha
 
 typedef struct Tnodo_fecha
 {
-    FECHA fecha; // contenido tipo fecha
+    FECHA fecha;             // contenido tipo fecha
     struct Tnodo_fecha *nxt; // NODO siguiente
     struct Tnodo_fecha *bck; // NODO anterior
 } NODO_FECHA;
@@ -24,45 +27,51 @@ typedef struct Tlst_fecha
     unsigned    size; // Tamaño de la lista
 } LST_FECHA;
 
-// =========== PROTOTYPE
 
-void scan_fecha      (FECHA *);
-void addf_fecha      (FECHA, LST_FECHA*);
-void addl_fecha      (FECHA, LST_FECHA*);
-void remove_fecha    (unsigned, LST_FECHA *);
-void init_lst_fecha  (LST_FECHA *);
-void print_lst_fecha (LST_FECHA);
+// =========== PROTOTYPES
+
+void   scan_fecha        (FECHA *);                      // Scan de struct tipo FECHA
+void   print_fecha       (FECHA);                        // Print de struct tipo FECHA
+void   addf_fecha        (FECHA, LST_FECHA*);            // Adicionar fecha a principio de lista
+void   addl_fecha        (FECHA, LST_FECHA*);            // Adicionar fecha al final de lista
+void   addn_fecha        (unsigned, FECHA, LST_FECHA*);  // Adicionar fecha en una posición dada
+void   reverse_lst_fecha (LST_FECHA *);                  // Invertir la lista
+void   remove_fecha      (unsigned, LST_FECHA *);        // Remover una fecha de la lista dada su posición
+FECHA* get_lst_fecha     (unsigned, LST_FECHA *);        // Retorna valor de fecha en una posición dada de la lista
+void   init_lst_fecha    (LST_FECHA *);                  // Inicializa la lista
+void   clear_lst_fecha   (LST_FECHA *);                  // Reseta la lista
+void   print_lst_fecha   (LST_FECHA);                    // Printea la lista
 
 
 // =========== MAIN
 
 void main()
 {
-    FECHA fecha; // crear variable tipo FECHA
-    LST_FECHA lst_fecha; // crear variable tipo LST_FECHA
-    init_lst_fecha(&lst_fecha); // inicializar la lista
+    FECHA fecha;                  // Crear variable tipo FECHA
+    LST_FECHA lst_fecha;         // Crear variable tipo LST_FECHA
+    init_lst_fecha(&lst_fecha); // Inicializar la lista
 
-    // añadir valores en la lista hasta que el usuario no introduzca un 's'
+    // Añadir valores en la lista hasta que el usuario no introduzca un 's'
     do
     {
-        scan_fecha(&fecha); // Pedir fehca
-        addf_fecha (fecha, &lst_fecha); // Añadir NODO_FECHA al final de la lista con los valores de fecha
+        scan_fecha(&fecha);             // Pedir fehca
+        addl_fecha (fecha, &lst_fecha); // Añadir NODO_FECHA al final de la lista con los valores de fecha
         printf    ("\nQuieres seguir añadiendo fechas? (s/n)");
         fflush    (stdin);
     } while(getch() == 's');
 
-    system("cls"); // Limpiar pantalla
+    system("cls");               // Limpiar pantalla
+    print_lst_fecha(&lst_fecha); // Muestra la lista
 
-    int nodo_index;
-    printf("\nRemover nodo (posición) [-1 = no]: ");
-    scanf ("%d", &nodo_index);
-    if (nodo_index >= 0)
-        remove_fecha(nodo_index, &lst_fecha);
+    // ESCRIBIR ABAJO OTRAS FUNCIONES ...
 
-    print_lst_fecha(lst_fecha); // Muestra contenido de la lista
 
-    printf("\n\nEl tamano de la lista es: %d", lst_fecha.size); // Muestra tamaño de la lista
+
+
+
+
 }
+
 
 // =========== FUNCS
 
@@ -75,12 +84,19 @@ void scan_fecha(FECHA * fecha)
 }
 
 
+void print_fecha(FECHA fecha)
+{
+    printf("\n %d / %d / %d ", fecha.dia, fecha.mes, fecha.anio);
+}
+
+
 void init_lst_fecha(LST_FECHA * lst_fecha)
 {
     lst_fecha->head = NULL;
     lst_fecha->tail = NULL;
     lst_fecha->size = 0;
 }
+
 
 void addf_fecha (FECHA fecha, LST_FECHA * lst_fecha) // addfirst
 {
@@ -97,8 +113,8 @@ void addf_fecha (FECHA fecha, LST_FECHA * lst_fecha) // addfirst
     }
     else
     {
-        new->nxt = lst_fecha->head;
-        new->nxt->bck = new;
+        new->nxt        = lst_fecha->head;
+        new->nxt->bck   = new;
         lst_fecha->head = new;
     }
     lst_fecha->size++;
@@ -127,11 +143,33 @@ void addl_fecha(FECHA fecha, LST_FECHA * lst_fecha) // addlast
 }
 
 
+void addn_fecha(unsigned index, FECHA fecha, LST_FECHA * lst_fecha) // add in n position
+{
+    unsigned i;
+    NODO_FECHA *new, * curr_nodo;
+    new = malloc( sizeof( NODO_FECHA ) );
+    new->fecha = fecha;
+    new->nxt   = NULL;
+    new->bck   = NULL;
+    for (i = 0; curr_nodo != NULL && i < index; curr_nodo = &curr_nodo->nxt, i++);
+    if (curr_nodo != NULL)
+    {
+        if (curr_nodo->bck != NULL)
+        {
+            new->bck            = curr_nodo->bck;
+            curr_nodo->bck->nxt = new;
+        }
+        new->nxt       = curr_nodo;
+        curr_nodo->bck = new;
+        lst_fecha->size++;
+    }
+}
+
+
 void remove_fecha(unsigned index, LST_FECHA * lst_fecha)
 {
     int i;
-    NODO_FECHA * curr_nodo;
-    curr_nodo = lst_fecha->head;
+    NODO_FECHA * curr_nodo = lst_fecha->head;
     for (i = 0; curr_nodo != NULL && i < index; curr_nodo = &curr_nodo->nxt, i++);
     if (curr_nodo != NULL)
     {
@@ -167,13 +205,54 @@ void remove_fecha(unsigned index, LST_FECHA * lst_fecha)
 }
 
 
+FECHA * get_lst_fecha(unsigned index, LST_FECHA * lst_fecha)
+{
+    unsigned i;
+    NODO_FECHA * curr_nodo = lst_fecha->head;
+    for (i = 0; curr_nodo != NULL && i < index; curr_nodo = &curr_nodo->nxt, i++);
+    return curr_nodo;
+}
+
+
 void print_lst_fecha(LST_FECHA lst_fecha)
 {
-    NODO_FECHA * curr_nodo; // curr para current
-    curr_nodo = lst_fecha.head;
+    NODO_FECHA * curr_nodo = lst_fecha.head; // curr para current
     while (curr_nodo != NULL)
     {
-        printf("\n %d / %d / %d ", (*curr_nodo).fecha.dia, (*curr_nodo).fecha.mes, (*curr_nodo).fecha.anio);
-        curr_nodo = (*curr_nodo).nxt;
+        print_fecha(curr_nodo->fecha);
+        curr_nodo = curr_nodo->nxt;
     }
+}
+
+
+void reverse_lst_fecha(LST_FECHA * lst_fecha)
+{
+    NODO_FECHA * curr_nodo = lst_fecha->head, * bck, * nxt;
+    bck = curr_nodo->bck;
+    while (curr_nodo != NULL)
+    {
+        nxt            = curr_nodo->nxt;
+        curr_nodo->nxt = bck;
+        curr_nodo->bck = nxt;
+        bck            = curr_nodo;
+        curr_nodo      = nxt;
+    }
+    bck             = lst_fecha->tail;
+    lst_fecha->tail = lst_fecha->head;
+    lst_fecha->head = bck;
+}
+
+
+void clear_lst_fecha(LST_FECHA * lst_fecha)
+{
+    NODO_FECHA * curr_nodo = lst_fecha->head, * bck;
+    while (curr_nodo != NULL)
+    {
+        bck       = curr_nodo;
+        curr_nodo = curr_nodo->nxt;
+        free(bck);
+    }
+    lst_fecha->size = 0;
+    lst_fecha->head = NULL;
+    lst_fecha->tail = NULL;
 }
