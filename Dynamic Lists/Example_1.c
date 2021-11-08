@@ -220,7 +220,7 @@ void print_lst_fecha(LST_FECHA lst_fecha)
     NODO_FECHA * curr_nodo = lst_fecha.head; // curr para current
     while (curr_nodo != NULL)
     {
-        printf("\n%3u: ", i++);
+        printf("\nFECHA %2u:  ", i++);
         print_fecha(curr_nodo->fecha);
         curr_nodo = curr_nodo->nxt;
     }
