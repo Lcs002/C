@@ -107,16 +107,13 @@ void addf_fecha (FECHA fecha, LST_FECHA * lst_fecha) // addfirst
     new->bck   = NULL;
 
     if (lst_fecha->head == NULL)
-    {
-        lst_fecha->head = new;
         lst_fecha->tail = new;
-    }
     else
     {
         new->nxt        = lst_fecha->head;
         new->nxt->bck   = new;
-        lst_fecha->head = new;
     }
+    lst_fecha->head = new;
     lst_fecha->size++;
 }
 
@@ -128,17 +125,15 @@ void addl_fecha(FECHA fecha, LST_FECHA * lst_fecha) // addlast
     new->fecha = fecha;
     new->nxt   = NULL;
     new->bck   = NULL;
+
     if (lst_fecha->head == NULL)
-    {
         lst_fecha->head = new;
-        lst_fecha->tail = new;
-    }
     else
     {
-        lst_fecha->tail->nxt = new;
         new->bck             = lst_fecha->tail;
-        lst_fecha->tail      = new;
+        lst_fecha->tail->nxt = new;
     }
+    lst_fecha->tail = new;
     lst_fecha->size++;
 }
 
@@ -151,6 +146,7 @@ void addn_fecha(unsigned index, FECHA fecha, LST_FECHA * lst_fecha) // add in n 
     new->fecha = fecha;
     new->nxt   = NULL;
     new->bck   = NULL;
+    
     for (i = 0; curr_nodo != NULL && i < index; curr_nodo = &curr_nodo->nxt, i++);
     if (curr_nodo != NULL)
     {
