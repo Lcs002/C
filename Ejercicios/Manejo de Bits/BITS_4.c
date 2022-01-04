@@ -13,6 +13,6 @@ int main (void)
 	while (bits1 <= 4);
 
 	printf("\n%c\n", c);
-	for (i = sizeof(char) * 8; i; i>>=1)
-		printf("%d", c & i);
+	for (i = sizeof(char)*8 - 1; i>=0; i--)
+		printf("%d", c & (1<<i));
 }
